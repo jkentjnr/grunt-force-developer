@@ -14,25 +14,36 @@
 var crypto = require('crypto'),
     path = require('path'),
     nforce = require('nforce'),
-	meta = require('nforce-metadata')(nforce);
+  meta = require('nforce-metadata')(nforce);
 
 var force = {
 
-  deletePackageOutput: function(grunt, options) {
-    if (grunt.file.exists('./' + options.outputDirectory))
-      grunt.file.delete('./' + options.outputDirectory, { force: true });
+  deletePackageOutput: function(grunt, options, cache) {
+
+    if (cache == true) {
+      if (grunt.file.exists('./' + options.outputDirectory))
+        grunt.file.delete('./' + options.outputDirectory, { force: true });
+    }
+    else {
+      if (grunt.file.exists('./' + options.outputDirectory + '/package.xml'))
+        grunt.file.delete('./' + options.outputDirectory + '/package.xml', { force: true });
+
+      if (grunt.file.exists('./' + options.outputDirectory + '/src'))
+        grunt.file.delete('./' + options.outputDirectory + '/src', { force: true });
+    }
   },
 
   evaluateProjectFiles: function(grunt, options) {
 
-  	// TODO: Add support for delete (?)
+    // TODO: Add support for delete (?)
 
     // Used to track what actions need to take place.
     var metadataAction = {};
 
     // Read the hash file (if possible) 
-    var fileDiff = (grunt.file.exists('./' + options.fileChangeHashFile))
-      ? grunt.file.readJSON('./' + options.fileChangeHashFile)
+    var fileDiffLocation = './' + options.outputDirectory + '/' + options.fileChangeHashFile;
+    var fileDiff = (grunt.file.exists(fileDiffLocation))
+      ? grunt.file.readJSON(fileDiffLocation)
       : {};   
 
     // Iterate through all folders under the project folder.
@@ -45,7 +56,7 @@ var force = {
       // If no custom provider, iterate through all files in the folder.
       grunt.file.expand({ filter: 'isFile' }, [dir + '/*', '!' + dir + '/force.config']).forEach(function(f) {
 
-      	// Read the file into memory
+        // Read the file into memory
         var data = grunt.file.read(f);
 
         // Get any previous hash for the file.
@@ -59,9 +70,9 @@ var force = {
 
         // Check to see if there is any difference in the file.
         if (existingHash != currentHash) {
-        	// If yes -- put an 'add' action for the file in the action collection.
-        	console.log('Change: ' + f);
-        	metadataAction[f] = { add: true };
+          // If yes -- put an 'add' action for the file in the action collection.
+          console.log('Change: ' + f);
+          metadataAction[f] = { add: true };
         }
 
         // Save the latest hash for the file.
@@ -72,7 +83,7 @@ var force = {
     });
 
     // Persist the hashes to file.
-    grunt.file.write('./' + options.fileChangeHashFile, JSON.stringify(fileDiff));
+    grunt.file.write(fileDiffLocation, JSON.stringify(fileDiff));
 
     // Return the actions to be performed.
     return metadataAction;
@@ -207,19 +218,19 @@ var force = {
 
   deployPackage: function(done, grunt, options) {
 
-	var org = nforce.createConnection({
-	  clientId: options.consumerKey,
-	  clientSecret: options.consumerSecret,
-	  redirectUri: 'http://localhost:3000/oauth/_callback',
-	  version: 32,
-	  mode: 'single',
-	  metaOpts: {       // options for nforce-metadata
-	    interval: options.pollInterval  // poll interval can be specified (optional)
-	  },
-	  plugins: ['meta'] // loads the plugin in this connection
-	});
+  var org = nforce.createConnection({
+    clientId: options.consumerKey,
+    clientSecret: options.consumerSecret,
+    redirectUri: 'http://localhost:3000/oauth/_callback',
+    version: 32,
+    mode: 'single',
+    metaOpts: {       // options for nforce-metadata
+      interval: options.pollInterval  // poll interval can be specified (optional)
+    },
+    plugins: ['meta'] // loads the plugin in this connection
+  });
 
-	console.log('Connected as \'' + options.username + '\'');
+  console.log('Connected as \'' + options.username + '\'');
 
     org.authenticate({ username: options.username, password: options.password, securityToken: options.token }).then(function() {
 
@@ -273,10 +284,8 @@ module.exports = function(grunt) {
 
     if (options.action == 'reset') {
 
-      // Clear the meta data output directory.
-      force.deletePackageOutput(grunt, options);
-
-      // TODO: Delete the difference cache file.
+      // Clear the meta data output directory & difference cache file.
+      force.deletePackageOutput(grunt, options, true);
 
       // Rebuild the difference file.
       force.evaluateProjectFiles(grunt, options);
@@ -284,28 +293,28 @@ module.exports = function(grunt) {
 
     if (options.action == 'package') {
 
-    	// Detect any new file or modified files.
-		var metadataAction = force.evaluateProjectFiles(grunt, options);
+      // Detect any new file or modified files.
+    var metadataAction = force.evaluateProjectFiles(grunt, options);
 
-		// Clear the meta data output directory.
-		force.deletePackageOutput(grunt, options);
+    // Clear the meta data output directory.
+    force.deletePackageOutput(grunt, options, false);
 
-		// Check to see if ahny file changes were detected.
-		if (Object.keys(metadataAction).length == 0) {
-		grunt.fail.warn('No new or modified files detected.');
-		return;
-		}
+    // Check to see if ahny file changes were detected.
+    if (Object.keys(metadataAction).length == 0) {
+      grunt.fail.warn('No new or modified files detected.');
+      return;
+    }
 
-		// Generate package folder structure with new & modified files.
-		force.generatePackageStructure(grunt, options, metadataAction);
+    // Generate package folder structure with new & modified files.
+    force.generatePackageStructure(grunt, options, metadataAction);
 
     }
 
     if (options.action == 'deploy') {
 
-    	// Deploy async using nforce.
-    	var done = this.async();
-    	force.deployPackage(done, grunt, options);
+      // Deploy async using nforce.
+      var done = this.async();
+      force.deployPackage(done, grunt, options);
     }
 
   });

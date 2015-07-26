@@ -127,9 +127,9 @@ Persists the file hashes to determine modified and new files.
 
 #### options.metadataSourceDirectory
 Type: `String`
-Default value: `'.metadata'`
+Default value: `'app-metadata'`
 
-The folder used to store all `'-meta.xml'` files for the project.  A corresponding file is required for all pages, components, trigger and classes.  If the `projectBaseDirectory` isn't altered, the default location is `./project/.metadata`.
+The folder used to store all `'-meta.xml'` files for the project.  A corresponding file is required for all pages, components, trigger and classes.  If the `projectBaseDirectory` isn't altered, the default location is `./project/app-metadata`.
 
 #### options.pollInterval
 Type: `Integer`
@@ -145,13 +145,13 @@ Used to determine the root of the project folder.
 
 #### options.outputDirectory
 Type: `String`
-Default value: `'package'`
+Default value: `'.package'`
 
 The folder used when the files are copied from the project folder into a salesforce package-compliant folder structure.
 
 #### options.outputPackageZip
 Type: `String`
-Default value: `'./package/package.zip'`
+Default value: `'./.package/package.zip'`
 
 The location where the zipped package is to be stored.
 
@@ -209,17 +209,17 @@ module.exports = function(grunt) {
     compress: {
       packageZip: {
         options: {
-          archive: './package/package.zip'
+          archive: './.package/package.zip'
         },
         files: [
-          {cwd: 'package/src/', expand: true, src: ['**']} // includes files in path and its subdirs
+          {cwd: './.package/src/', expand: true, src: ['**']} // includes files in path and its subdirs
         ]
       }
     },
 
     antdeploy: {
       options: {
-        root: './package/src/', // note trailing slash is important
+        root: './.package/src/', // note trailing slash is important
         apiVersion: '32.0',
         existingPackage: true
       },
