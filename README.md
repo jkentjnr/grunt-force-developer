@@ -30,7 +30,7 @@ Using grunt and the `grunt-force-developer` tasks, developers for salesforce & f
 ### Folder Structures
 
 #### Traditional Folder Structure
-Traditionally, when a developer is developing for salesforce / force.com, they are constrained to a package structure.  This structure is extremely limiting and, as the size of projects / packages grow, becomes unweildly.
+Traditionally, when a developer is developing for salesforce / force.com, they are constrained by the mandated package structure.  This structure is extremely limiting and, as the size of projects / packages grow, becomes unweildly.
 
 ```
 package.xml
@@ -49,7 +49,7 @@ package.xml
 ```
 
 #### Force Developer Folder Structure
-Using `grunt-force-developer`, a developer can adopt a more complex file structure.  The developer has configured their code in a structure appropriate for their project.
+Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the perscribed package structure.  The below example is a snippet from a developer managing their package in structure appropriate for their project.
 
 ```
 == .metadata
@@ -66,6 +66,8 @@ Using `grunt-force-developer`, a developer can adopt a more complex file structu
     -- Payment.page
     -- Payment__c.object
 ```
+
+### Usage
 
 In your project's Gruntfile, add a section named `force` to the data object passed into `grunt.initConfig()`.
 
