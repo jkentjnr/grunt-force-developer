@@ -30,7 +30,7 @@ To use `grunt-force-developer` as quickly as possible, we recommend starting wit
 ### Folder Structures
 
 #### Traditional Folder Structure
-Traditionally, when a developer is developing for salesforce / force.com, they are constrained by the mandated package structure.  This structure is extremely limiting and, as the size of projects / packages grow, becomes unweildly.
+Traditionally, when a developer is developing for salesforce / force.com, they are constrained by the mandated package structure.  This structure is extremely limiting and, as the size of projects / packages grow, raplidly becomes unwieldy.
 
 ```
 package.xml
@@ -49,7 +49,7 @@ package.xml
 ```
 
 #### grunt-force-developer Folder Structure
-Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the perscribed salesforce package structure.  The below example is a snippet from a developer managing their package in structure with little constraints, appropriate for their project.
+Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the prescribed salesforce package structure.  The below example is a snippet from a developer managing their package in structure with little constraints, appropriate for their project.
 
 ```
 == .metadata
@@ -129,7 +129,7 @@ Persists the file hashes to determine modified and new files.
 Type: `String`
 Default value: `'.metadata'`
 
-The folder used to store all `'-meta.xml'` files for the project.  A corrosponding file is required for all pages, components, trigger and classes.  If the `projectBaseDirectory` isn't altered, the default location is `./project/.metadata`.
+The folder used to store all `'-meta.xml'` files for the project.  A corresponding file is required for all pages, components, trigger and classes.  If the `projectBaseDirectory` isn't altered, the default location is `./project/.metadata`.
 
 #### options.pollInterval
 Type: `Integer`
@@ -157,7 +157,7 @@ The location where the zipped package is to be stored.
 
 ### Recommended Gruntfile.js
 
-In this example, the default task is configured to package the new and modified project files and upload them using `ant`.  `ant` has been used due to problems getting `nforce-metadata` to deploy zip files -- this will be addressed.  
+In this example, the default task is configured to package the new and modified project files and upload these using `ant`.   `ant` has been used due to problems getting `nforce-metadata` to deploy zip files -- this will be addressed.  
 
 This script enables a developer to work using any folder structure and uploading changes by executing `grunt`.  Once the `nforce` issue is addressed, this script would be executed `grunt default-nforce`.
 
@@ -247,6 +247,9 @@ module.exports = function(grunt) {
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+
+## Acknowledgements 
+* [Kevin O'Hara](https://twitter.com/kevohara) for his exceptional nodejs/salesforce work ... and especially his [nforce](https://github.com/kevinohara80/nforce) libraries.
 
 ## Release History
 _(Nothing yet)_
