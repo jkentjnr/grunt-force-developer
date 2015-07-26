@@ -163,7 +163,7 @@ This script enables a developer to work using any folder structure and uploading
 
 Install the appropriate dependancies required for this Gruntfile by executing: 
 ```shell
-npm install grunt-force-developer grunt-ant-sfdc grunt-force-developer --save-dev
+npm install grunt-force-developer grunt-ant-sfdc grunt-contrib-compress --save-dev
 ```
 Please ensure `ant` is installed and available as part of the environment path.
 
