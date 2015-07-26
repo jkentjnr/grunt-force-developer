@@ -21,21 +21,31 @@ grunt.loadNpmTasks('grunt-force-developer');
 
 ### Overview
 
+Using grunt and the `grunt-force-developer` tasks, developers for salesforce & force.com can:
+
+* Manage their projects / packages in any folder structure they like.
+* Integrate the full suite of grunt tasks into their deployment process.
+* Ensure only modified code is push as part of each deployment / build allow a developer to code using any IDE, pushing changes via grunt.
+
+### Folder Structures
+
 #### Traditional Folder Structure
 Traditionally, when a developer is developing for salesforce / force.com, they are constrained to a package structure.  This structure is extremely limiting and, as the size of projects / packages grow, becomes unweildly.
 
 ```
 package.xml
 == classes
-    -- Class1.cls
-    -- Class1.cls-meta.xml
-    -- Class2.cls
-    -- Class2.cls-meta.xml
+    -- PaymentController.cls
+    -- PaymentController.cls-meta.xml
+    -- UserManagement.cls
+    -- UserManagement.cls-meta.xml
 == pages
-    -- Page1.page
-    -- Page1.page-meta.xml
+    -- Payment.page
+    -- Payment.page-meta.xml
+    -- UserManagement.page
+    -- UserManagement.page-meta.xml
 == objects
-    -- Test_Object__c.object
+    -- Payment__c.object
 ```
 
 #### Force Developer Folder Structure
@@ -43,9 +53,10 @@ Using `grunt-force-developer`, a developer can adopt a more complex file structu
 
 ```
 == .metadata
+    -- Payment.page-meta.xml
     -- PaymentController.cls-meta.xml
-    -- PaymentController.cls-meta.xml
-    -- PaymentController.cls-meta.xml
+    -- UserManagement.page-meta.xml
+    -- UserManagementController.cls-meta.xml
 == Admin
    == Users
       -- UserManagementController.cls
@@ -53,6 +64,7 @@ Using `grunt-force-developer`, a developer can adopt a more complex file structu
 == Payments
     -- PaymentController.cls
     -- Payment.page
+    -- Payment__c.object
 ```
 
 In your project's Gruntfile, add a section named `force` to the data object passed into `grunt.initConfig()`.
