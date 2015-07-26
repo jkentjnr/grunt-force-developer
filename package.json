@@ -38,7 +38,13 @@
     "grunt": "~0.4.5"
   },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "salesforce",
+    "force.com",
+    "nforce",
+    "ant",
+    "developer tool",
+    "grunt"
   ],
   "dependencies": {
     "bluebird": "^2.9.34",
