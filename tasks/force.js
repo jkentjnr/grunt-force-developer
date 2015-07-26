@@ -275,7 +275,7 @@ module.exports = function(grunt) {
       outputDirectory: '.package',
       outputTempDirectory: 'src',
       outputPackageZip: './.package/package.zip',
-      metadataSourceDirectory: '.metadata',
+      metadataSourceDirectory: 'app-metadata',
       environment: 'production',
       pollInterval: 500,
     });
@@ -287,26 +287,24 @@ module.exports = function(grunt) {
       // Clear the meta data output directory & difference cache file.
       force.deletePackageOutput(grunt, options, true);
 
-      // Rebuild the difference file.
-      force.evaluateProjectFiles(grunt, options);
     }
 
     if (options.action == 'package') {
 
-      // Detect any new file or modified files.
-    var metadataAction = force.evaluateProjectFiles(grunt, options);
+        // Detect any new file or modified files.
+      var metadataAction = force.evaluateProjectFiles(grunt, options);
 
-    // Clear the meta data output directory.
-    force.deletePackageOutput(grunt, options, false);
+      // Clear the meta data output directory.
+      force.deletePackageOutput(grunt, options, false);
 
-    // Check to see if ahny file changes were detected.
-    if (Object.keys(metadataAction).length == 0) {
-      grunt.fail.warn('No new or modified files detected.');
-      return;
-    }
+      // Check to see if ahny file changes were detected.
+      if (Object.keys(metadataAction).length == 0) {
+        grunt.fail.warn('No new or modified files detected.');
+        return;
+      }
 
-    // Generate package folder structure with new & modified files.
-    force.generatePackageStructure(grunt, options, metadataAction);
+      // Generate package folder structure with new & modified files.
+      force.generatePackageStructure(grunt, options, metadataAction);
 
     }
 
