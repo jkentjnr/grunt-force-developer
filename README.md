@@ -23,7 +23,7 @@ Using grunt and the `grunt-force-developer` tasks, developers for salesforce & f
 
 * Manage their projects / packages in any folder structure they like.
 * Integrate the full suite of grunt tasks into their deployment process.
-* Ensure only modified code is push as part of each deployment / build allow a developer to code using any IDE, pushing changes via grunt. 
+* Ensure only new & modified code is published as part of each deployment / build.  This enables a developer to code using any IDE, pushing changes via grunt. 
 
 To use `grunt-force-developer` as quickly as possible, we recommend starting with the `Gruntfile.js` in examples.
 
@@ -49,7 +49,7 @@ package.xml
 ```
 
 #### grunt-force-developer Folder Structure
-Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the perscribed package structure.  The below example is a snippet from a developer managing their package in structure appropriate for their project.
+Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the perscribed salesforce package structure.  The below example is a snippet from a developer managing their package in structure with little constraints, appropriate for their project.
 
 ```
 == .metadata
