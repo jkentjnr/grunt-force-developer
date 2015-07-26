@@ -189,6 +189,11 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     force: {
+      resetCache: {
+        options: {
+          action: 'reset'
+        },
+      },
       createPackage: {
         options: {
           action: 'package'
@@ -239,6 +244,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-force-developer');
 
+  grunt.registerTask('reset', ['force:resetCache']);
   grunt.registerTask('default', ['force:createPackage', 'compress:packageZip', 'antdeploy:deployPackage']);
   grunt.registerTask('default-nforce', ['force:createPackage', 'compress:packageZip', 'force:deployPackage']);
 
