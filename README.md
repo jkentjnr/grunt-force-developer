@@ -1,6 +1,6 @@
-# grunt-force
+# grunt-force-developer
 
-> The best Grunt plugin ever.
+> A grunt task for salesforce and force.com development.  Designed to help force.com developers to work using the benefits of grunt and a folder structure when developing. 
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -8,18 +8,53 @@ This plugin requires Grunt `~0.4.5`
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
-npm install grunt-force --save-dev
+npm install grunt-force-developer --save-dev
 ```
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('grunt-force');
+grunt.loadNpmTasks('grunt-force-developer');
 ```
 
 ## The "force" task
 
 ### Overview
+
+#### Traditional Folder Structure
+Traditionally, when a developer is developing for salesforce / force.com, they are constrained to a package structure.  This structure is extremely limiting and, as the size of projects / packages grow, becomes unweildly.
+
+```
+package.xml
+== classes
+    -- Class1.cls
+    -- Class1.cls-meta.xml
+    -- Class2.cls
+    -- Class2.cls-meta.xml
+== pages
+    -- Page1.page
+    -- Page1.page-meta.xml
+== objects
+    -- Test_Object__c.object
+```
+
+#### Force Developer Folder Structure
+Using `grunt-force-developer`, a developer can adopt a more complex file structure.  The developer has configured their code in a structure appropriate for their project.
+
+```
+== .metadata
+    -- PaymentController.cls-meta.xml
+    -- PaymentController.cls-meta.xml
+    -- PaymentController.cls-meta.xml
+== Admin
+   == Users
+      -- UserManagementController.cls
+      -- UserManagement.page
+== Payments
+    -- PaymentController.cls
+    -- Payment.page
+```
+
 In your project's Gruntfile, add a section named `force` to the data object passed into `grunt.initConfig()`.
 
 ```js
