@@ -17,15 +17,15 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-force-developer');
 ```
 
-## The "force" task
-
 ### Overview
 
 Using grunt and the `grunt-force-developer` tasks, developers for salesforce & force.com can:
 
 * Manage their projects / packages in any folder structure they like.
 * Integrate the full suite of grunt tasks into their deployment process.
-* Ensure only modified code is push as part of each deployment / build allow a developer to code using any IDE, pushing changes via grunt.
+* Ensure only modified code is push as part of each deployment / build allow a developer to code using any IDE, pushing changes via grunt. 
+
+To use `grunt-force-developer` as quickly as possible, we recommend starting with the `Gruntfile.js` in examples.
 
 ### Folder Structures
 
@@ -48,7 +48,7 @@ package.xml
     -- Payment__c.object
 ```
 
-#### Force Developer Folder Structure
+#### grunt-force-developer Folder Structure
 Using `grunt-force-developer`, a developer can adopt a fully dynamic file structure that operates independent of the perscribed package structure.  The below example is a snippet from a developer managing their package in structure appropriate for their project.
 
 ```
@@ -72,63 +72,177 @@ Using `grunt-force-developer`, a developer can adopt a fully dynamic file struct
 In your project's Gruntfile, add a section named `force` to the data object passed into `grunt.initConfig()`.
 
 ```js
+var credentials = {
+  consumerKey: '3MVG98SW_UPr.JFjzEoUdZZczc4pPByJsJh_3hvL_dxAMPsA8DpjdYBXepSg3GztwV.PPEG2Q6YaK1l.11111',
+  consumerSecret: '1233452345246423523',
+  username: 'james.kent@gruntdemo.vertic.com.au',
+  password: 'qwerty123',
+  token: 'O7uccvnguEXqLnOBiTLC1234'
+};
+
+// Project configuration.
 grunt.initConfig({
   force: {
-    options: {
-      // Task-specific options go here.
+    createPackage: {
+      options: {
+        action: 'package'
+      },
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+    deployPackage: {
+      options: {
+        action: 'deploy',
+        consumerKey: credentials.consumerKey,
+        consumerSecret: credentials.consumerSecret,
+        username: credentials.username,
+        password: credentials.password,
+        token: credentials.token
+      },
+    }
+  }
 });
 ```
 
 ### Options
 
-#### options.separator
+#### options.action
 Type: `String`
-Default value: `',  '`
+Default value: `'deploy'`
 
-A string value that is used to do something with whatever.
+This option drives the behaviour of the plugin. There are 3 available modes:
+* reset = Deletes the 'package' directory and clears any files hashes.  Ensures the next 'package' action will package all project files.
+* package = Copies all supported new & modified project files into the standard salesforce package structure.
+* deploy = Deploys the code to salesforce using nforce (Currently not working -- [grunt-ant-sfdc](https://github.com/kevinohara80/grunt-ant-sfdc] as an alternative).
 
-#### options.punctuation
+#### options.environment
 Type: `String`
-Default value: `'.'`
+Default value: `'production'`
 
-A string value that is used to do something else with whatever else.
+Values can be 'production' or 'sandbox'. Maps to [nforce createConnection](https://github.com/kevinohara80/nforce/blob/master/README.md#createconnectionopts).
 
-### Usage Examples
+#### options.fileChangeHashFile
+Type: `String`
+Default value: `'.force-developer.filehash.json'`
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+Persists the file hashes to determine modified and new files.
 
-```js
-grunt.initConfig({
-  force: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
+#### options.metadataSourceDirectory
+Type: `String`
+Default value: `'.metadata'`
+
+The folder used to store all `'-meta.xml'` files for the project.  A corrosponding file is required for all pages, components, trigger and classes.  If the `projectBaseDirectory` isn't altered, the default location is `./project/.metadata`.
+
+#### options.pollInterval
+Type: `Integer`
+Default value: `500`
+
+Sets the polling interval when deploying a package.
+
+#### options.projectBaseDirectory
+Type: `String`
+Default value: `'project'`
+
+Used to determine the root of the project folder.
+
+#### options.outputDirectory
+Type: `String`
+Default value: `'package'`
+
+The folder used when the files are copied from the project folder into a salesforce package-compliant folder structure.
+
+#### options.outputPackageZip
+Type: `String`
+Default value: `'./package/package.zip'`
+
+The location where the zipped package is to be stored.
+
+### Recommended Gruntfile.js
+
+In this example, the default task is configured to package the new and modified project files and upload them using `ant`.  `ant` has been used due to problems getting `nforce-metadata` to deploy zip files -- this will be addressed.  
+
+This script enables a developer to work using any folder structure and uploading changes by executing `grunt`.  Once the `nforce` issue is addressed, this script would be executed `grunt default-nforce`.
+
+Install the appropriate dependancies required for this Gruntfile by executing: 
+```shell
+npm install grunt-force-developer grunt-ant-sfdc grunt-force-developer --save-dev
 ```
+Please ensure `ant` is installed and available as part of the environment path.
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
+Gruntfile.js:
 ```js
-grunt.initConfig({
-  force: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
+'use strict';
+module.exports = function(grunt) {
+
+  // TODO: Update the credentials.
+  var credentials = {
+    // Not required for ant deployment
+    consumerKey: '3MVG98SW_UPr.JFjzEoUdZZczc4pPByJsJh_3hvL_dxAMPsA8DpjdYBXepSg3GztwV.PPEG2Q6YaK1l.11111', 
+    // Not required for ant deployment
+    consumerSecret: '1233452345246423523',
+    
+    username: 'james.kent@gruntdemo.vertic.com.au',
+    password: 'qwerty123',
+    token: 'O7uccvnguEXqLnOBiTLC1234'
+  };
+
+  // Project configuration.
+  grunt.initConfig({
+
+    // Configuration to be run (and then tested).
+    force: {
+      createPackage: {
+        options: {
+          action: 'package'
+        },
+      },
+      deployPackage: {
+        options: {
+          action: 'deploy',
+          consumerKey: credentials.consumerKey,
+          consumerSecret: credentials.consumerSecret,
+          username: credentials.username,
+          password: credentials.password,
+          token: credentials.token
+        },
+      }
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+
+    compress: {
+      packageZip: {
+        options: {
+          archive: './package/package.zip'
+        },
+        files: [
+          {cwd: 'package/src/', expand: true, src: ['**']} // includes files in path and its subdirs
+        ]
+      }
     },
-  },
-});
+
+    antdeploy: {
+      options: {
+        root: './package/src/', // note trailing slash is important
+        apiVersion: '32.0',
+        existingPackage: true
+      },
+      deployPackage: {
+        options: {
+          user: credentials.username,
+          pass: credentials.password,
+          token: credentials.token
+        }
+      }
+    }
+
+  });
+
+  // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-ant-sfdc');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-force-developer');
+
+  grunt.registerTask('default', ['force:createPackage', 'compress:packageZip', 'antdeploy:deployPackage']);
+  grunt.registerTask('default-nforce', ['force:createPackage', 'compress:packageZip', 'force:deployPackage']);
+
+};
 ```
 
 ## Contributing
