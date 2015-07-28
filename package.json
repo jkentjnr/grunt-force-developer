@@ -1,7 +1,7 @@
 {
   "name": "grunt-force-developer",
   "description": "A grunt task for salesforce and force.com development",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "homepage": "https://github.com/jkentjnr/grunt-force-developer",
   "author": {
     "name": "James Kent",
