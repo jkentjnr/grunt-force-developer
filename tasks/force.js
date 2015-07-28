@@ -98,6 +98,24 @@ var force = {
     // Create a path to the temp output dir.  This will house the unpackaged package.xml and source
     var targetSrc = './' + options.outputDirectory + '/' + options.outputTempDirectory + '/';
 
+    var buildMetadata = function(f, metadataTarget, options) {
+
+      var ext = path.extname(f);
+
+      var data = null;
+      switch (ext) {
+        case '.cls':
+          data = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ApexClass xmlns=\"http:\/\/soap.sforce.com\/2006\/04\/metadata\">\r\n    <apiVersion>' + options.apiVersion + '.0<\/apiVersion>\r\n    <status>Active<\/status>\r\n<\/ApexClass>';
+          break;
+        case '.page':
+          data = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ApexPage xmlns=\"http:\/\/soap.sforce.com\/2006\/04\/metadata\">\r\n    <apiVersion>' + options.apiVersion + '.0<\/apiVersion>\r\n    <availableInTouch>false<\/availableInTouch>\r\n    <confirmationTokenRequired>false<\/confirmationTokenRequired>\r\n    <label>Calculator<\/label>\r\n<\/ApexPage>';
+          break;
+      }
+
+      grunt.file.write(metadataTarget, data);
+
+    };
+
     // 
     var copier = function(grunt, options, f, objectDir, hasMetadata) {
 
@@ -111,8 +129,10 @@ var force = {
         var metadataSource = './' + options.projectBaseDirectory + '/' + options.metadataSourceDirectory + '/' + metadataFilename;
         var metadataTarget = target + '/' + metadataFilename;
 
-        if (!grunt.file.exists(metadataSource))
-          grunt.log.writeln('Expected metadata - ' + metadataTarget);
+        if (!grunt.file.exists(metadataSource)) {
+          grunt.log.writeln('Generating metadata - ' + metadataTarget);
+          buildMetadata(f, metadataTarget, options);
+        }
         else
           grunt.file.copy(metadataSource, metadataTarget);
       }
@@ -270,6 +290,7 @@ module.exports = function(grunt) {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
       action: 'package',
+      apiVersion: 34,
       fileChangeHashFile: '.force-developer.filehash.json',
       projectBaseDirectory: 'project',
       outputDirectory: '.package',
