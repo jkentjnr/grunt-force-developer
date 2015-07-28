@@ -155,6 +155,12 @@ Default value: `'./.package/package.zip'`
 
 The location where the zipped package is to be stored.
 
+#### options.apiVersion
+Type: `Integer`
+Default value: `34`
+
+The api version to be used by the task.  Used when creating on-demand meta-xml files.
+
 ### Recommended Gruntfile.js
 
 In this example, the default task is configured to package the new and modified project files and upload these using `ant`.   `ant` has been used due to problems getting `nforce-metadata` to deploy zip files -- this will be addressed.  
@@ -258,4 +264,6 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * [Kevin O'Hara](https://twitter.com/kevohara) for his exceptional nodejs/salesforce work ... and especially his [nforce](https://github.com/kevinohara80/nforce) libraries.
 
 ## Release History
-_(Nothing yet)_
+* 0.1.8
+  * Added apiVersion to options.
+  * Added support for dynamically creating -meta.xml files for classes and pages. 
