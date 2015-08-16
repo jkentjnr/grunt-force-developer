@@ -14,7 +14,7 @@
 var crypto = require('crypto'),
     path = require('path'),
     nforce = require('nforce'),
-  meta = require('nforce-metadata')(nforce);
+    meta = require('nforce-metadata')(nforce);
 
 var force = {
 
@@ -33,6 +33,15 @@ var force = {
     }
   },
 
+  commitChangesToHashfile: function(grunt, options) {
+
+    var fileDiffLive = './' + options.outputDirectory + '/' + options.fileChangeHashFile;
+    var fileDiffStage = './' + options.outputDirectory + '/' + options.fileChangeHashStagingFile;
+
+    // Commit the staged changes to the most recent hashfile.
+    grunt.file.copy(fileDiffStage, fileDiffLive);
+  },
+
   evaluateProjectFiles: function(grunt, options) {
 
     // TODO: Add support for delete (?)
@@ -40,10 +49,12 @@ var force = {
     // Used to track what actions need to take place.
     var metadataAction = {};
 
+    var fileDiffLive = './' + options.outputDirectory + '/' + options.fileChangeHashFile;
+    var fileDiffStage = './' + options.outputDirectory + '/' + options.fileChangeHashStagingFile;
+
     // Read the hash file (if possible) 
-    var fileDiffLocation = './' + options.outputDirectory + '/' + options.fileChangeHashFile;
-    var fileDiff = (grunt.file.exists(fileDiffLocation))
-      ? grunt.file.readJSON(fileDiffLocation)
+    var fileDiff = (grunt.file.exists(fileDiffLive))
+      ? grunt.file.readJSON(fileDiffLive)
       : {};   
 
     // Iterate through all folders under the project folder.
@@ -82,8 +93,8 @@ var force = {
 
     });
 
-    // Persist the hashes to file.
-    grunt.file.write(fileDiffLocation, JSON.stringify(fileDiff));
+    // Persist the hashes to the staging file.
+    grunt.file.write(fileDiffStage, JSON.stringify(fileDiff));
 
     // Return the actions to be performed.
     return metadataAction;
@@ -101,6 +112,7 @@ var force = {
     var buildMetadata = function(f, metadataTarget, options) {
 
       var ext = path.extname(f);
+      var name = path.basename(f, ext);
 
       var data = null;
       switch (ext) {
@@ -108,7 +120,7 @@ var force = {
           data = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ApexClass xmlns=\"http:\/\/soap.sforce.com\/2006\/04\/metadata\">\r\n    <apiVersion>' + options.apiVersion + '.0<\/apiVersion>\r\n    <status>Active<\/status>\r\n<\/ApexClass>';
           break;
         case '.page':
-          data = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ApexPage xmlns=\"http:\/\/soap.sforce.com\/2006\/04\/metadata\">\r\n    <apiVersion>' + options.apiVersion + '.0<\/apiVersion>\r\n    <availableInTouch>false<\/availableInTouch>\r\n    <confirmationTokenRequired>false<\/confirmationTokenRequired>\r\n    <label>Calculator<\/label>\r\n<\/ApexPage>';
+          data = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ApexPage xmlns=\"http:\/\/soap.sforce.com\/2006\/04\/metadata\">\r\n    <apiVersion>' + options.apiVersion + '.0<\/apiVersion>\r\n    <availableInTouch>false<\/availableInTouch>\r\n    <confirmationTokenRequired>false<\/confirmationTokenRequired>\r\n    <label>' + name + '<\/label>\r\n<\/ApexPage>';
           break;
       }
 
@@ -292,6 +304,7 @@ module.exports = function(grunt) {
       action: 'package',
       apiVersion: 34,
       fileChangeHashFile: '.force-developer.filehash.json',
+      fileChangeHashStagingFile: '.force-developer.filehash.staging.json',
       projectBaseDirectory: 'project',
       outputDirectory: '.package',
       outputTempDirectory: 'src',
@@ -334,6 +347,12 @@ module.exports = function(grunt) {
       // Deploy async using nforce.
       var done = this.async();
       force.deployPackage(done, grunt, options);
+    }
+
+    if (options.action == 'commit') {
+
+      // Replace the hashfile with the staging hashfile.
+      force.commitChangesToHashfile(grunt, options);
     }
 
   });

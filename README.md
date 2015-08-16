@@ -112,6 +112,7 @@ This option drives the behaviour of the plugin. There are 3 available modes:
 * reset = Deletes the 'package' directory and clears any files hashes.  Ensures the next 'package' action will package all project files.
 * package = Copies all supported new & modified project files into the standard salesforce package structure.
 * deploy = Deploys the code to salesforce using nforce (Currently not working -- [grunt-ant-sfdc](https://github.com/kevinohara80/grunt-ant-sfdc] as an alternative).
+* commit = Updates the the files hashes cache, ensuring the next deploy call will only package changed, undeployed project files.
 
 #### options.environment
 Type: `String`
@@ -190,7 +191,7 @@ module.exports = function(grunt) {
     token: 'O7uccvnguEXqLnOBiTLC1234'
   };
 
-  // Project configuration.
+// Project configuration.
   grunt.initConfig({
 
     // Configuration to be run (and then tested).
@@ -214,7 +215,12 @@ module.exports = function(grunt) {
           password: credentials.password,
           token: credentials.token
         },
-      }
+      },
+      commitCache: {
+        options: {
+          action: 'commit'
+        },
+      },
     },
 
     compress: {
@@ -264,6 +270,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * [Kevin O'Hara](https://twitter.com/kevohara) for his exceptional nodejs/salesforce work ... and especially his [nforce](https://github.com/kevinohara80/nforce) libraries.
 
 ## Release History
+* 0.1.9
+  * Fundamental change - Altered logic so a deploy action does not update the changed file cache.  This means that once a deploy is successful, you must make a second call to update the changed file cache so they aren't included in any subsequent deploy calls.  
 * 0.1.8
   * Added apiVersion to options.
   * Added support for dynamically creating -meta.xml files for classes and pages. 
