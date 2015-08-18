@@ -3,9 +3,10 @@
 > A grunt task for salesforce and force.com development.  Designed to help force.com developers to work using the benefits of grunt and a folder structure when developing. 
 
 ## Getting Started
-This plugin requires Grunt `~0.4.5`
-
-If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
+First - learn about Grunt
+Second - read the overview below
+Third - [watch this short video](https://youtu.be/NqAKO-3JftI) demoing grunt-force-developer.
+Finally - Download via NPM and have a play.
 
 ```shell
 npm install grunt-force-developer --save-dev
