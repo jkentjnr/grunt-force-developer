@@ -271,6 +271,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * [Kevin O'Hara](https://twitter.com/kevohara) for his exceptional nodejs/salesforce work ... and especially his [nforce](https://github.com/kevinohara80/nforce) libraries.
 
 ## Release History
+* 0.1.10
+  * Changed search for meta-xml files to search all project directories before generating metadata.
 * 0.1.9
   * Fundamental change - Altered logic so a deploy action does not update the changed file cache.  This means that once a deploy is successful, you must make a second call to update the changed file cache so they aren't included in any subsequent deploy calls.  
 * 0.1.8

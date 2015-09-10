@@ -14,7 +14,8 @@
 var crypto = require('crypto'),
     path = require('path'),
     nforce = require('nforce'),
-    meta = require('nforce-metadata')(nforce);
+    meta = require('nforce-metadata')(nforce),
+    glob = require("glob");
 
 var force = {
 
@@ -65,7 +66,7 @@ var force = {
       // customProc(dir, metadataAction, fillDiff)
 
       // If no custom provider, iterate through all files in the folder.
-      grunt.file.expand({ filter: 'isFile' }, [dir + '/*', '!' + dir + '/force.config']).forEach(function(f) {
+      grunt.file.expand({ filter: 'isFile' }, [dir + '/*', '!' + dir + '/force.config', '!' + dir + '/*-meta.xml']).forEach(function(f) {
 
         // Read the file into memory
         var data = grunt.file.read(f);
@@ -137,16 +138,24 @@ var force = {
       grunt.file.copy(f, target + '/' + sourceFilename);
 
       if (hasMetadata) {
+        
         var metadataFilename = sourceFilename + '-meta.xml';
-        var metadataSource = './' + options.projectBaseDirectory + '/' + options.metadataSourceDirectory + '/' + metadataFilename;
         var metadataTarget = target + '/' + metadataFilename;
 
-        if (!grunt.file.exists(metadataSource)) {
+        var matches = glob.sync(
+          options.projectBaseDirectory + '/**/*' + metadataFilename
+        );
+
+        if (matches.length > 0) {
+          grunt.file.copy(matches[0], metadataTarget);
+        }
+        else {
+          var metadataSource = './' + options.projectBaseDirectory + '/' + options.metadataSourceDirectory + '/' + metadataFilename;
+
           grunt.log.writeln('Generating metadata - ' + metadataTarget);
           buildMetadata(f, metadataTarget, options);
         }
-        else
-          grunt.file.copy(metadataSource, metadataTarget);
+        
       }
     };
 
